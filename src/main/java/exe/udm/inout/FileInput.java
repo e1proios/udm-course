@@ -68,6 +68,10 @@ public class FileInput {
   }
 
   public static void parseGamesAsPOJOs() {
+    FileInput.parseGamesAsPOJOs(Integer.MIN_VALUE);
+  }
+
+  public static void parseGamesAsPOJOs(int minRating) {
     String path = "src/main/java/exe/udm/inout/files/games.csv";
 
     try (Stream<String> lines = Files.lines(Paths.get(path))) {
@@ -90,6 +94,7 @@ public class FileInput {
             splitLine[8] == null ? "" : splitLine[8]
           );
         })
+        .filter(game -> game.rating() >= minRating)
         .sorted((g1, g2) -> {
           var g1Fin = g1.finished().toLowerCase();
           var g2Fin = g2.finished().toLowerCase();
