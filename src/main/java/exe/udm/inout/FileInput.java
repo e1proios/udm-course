@@ -17,7 +17,7 @@ import java.util.TreeMap;
 
 public class FileInput {
   public static void runTest() {
-    String path = "src/main/java/exe/udm/inout/files/poems.txt";
+    String path = "src/main/resources/files/poems.txt";
     File file = new File(path);
 
     if (!file.exists()) {
@@ -41,7 +41,7 @@ public class FileInput {
   }
 
   public static void parseGamesAsStrings() {
-    String path = "src/main/java/exe/udm/inout/files/games.csv";
+    String path = "src/main/resources/files/games.csv";
 
     try (Scanner scn = new Scanner(new File(path))) {
       scn.useDelimiter("\\R");
@@ -72,7 +72,7 @@ public class FileInput {
   }
 
   public static void parseGamesAsPOJOs(int minRating) {
-    String path = "src/main/java/exe/udm/inout/files/games.csv";
+    String path = "src/main/resources/files/games.csv";
 
     try (Stream<String> lines = Files.lines(Paths.get(path))) {
       Map<Integer, List<PlayedGame>> grouped = lines.skip(1)
