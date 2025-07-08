@@ -2,10 +2,11 @@ package exe.udm.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;;
 
 // additional German checksum used in vehicle registration docs
 public class VinValidator {
-  private static final String VIN_REGEX = "(?i)^[a-hj-npr-z0-9]{14}[0-9]{3}$";
+  private static final Pattern VIN_REGEX = Pattern.compile("(?i)^[a-hj-npr-z0-9]{14}[0-9]{3}$");
 
   private static final Map<Character, Integer> VIN_CHARS_VALUE_MAP = new HashMap<>(Map.ofEntries(
     Map.entry('A', 1),
@@ -56,10 +57,10 @@ public class VinValidator {
 
   public static boolean testVin(String vin, char checksum) {
     if (vin.length() != 17) {
-      System.out.println(vin + " - incorrect VIN length!");
+      System.out.println(vin + " - invalid VIN length!");
       return false;
     }
-    if (vin.matches(VinValidator.VIN_REGEX)) {
+    if (VinValidator.VIN_REGEX.matcher(vin).matches()) {
       boolean isValid = checksum == VinValidator.calculateVinChecksum(vin);
 
       if (isValid) {
@@ -70,16 +71,16 @@ public class VinValidator {
 
       return isValid;
     }
-    System.out.println(vin + " - incorrect VIN shape!");
+    System.out.println(vin + " - invalid VIN shape!");
     return false;
   }
 
   public static final void testVinValidator() {
     Map<String, Character> testVins = new HashMap<>(Map.of(
       "WMWXR51080TM29088", '5', // correct checksum: 5
-      "WMWXR51080TM29AAA", '0',
-      "WMWXR51080TM29IOQ", '0',
-      "WMWXR51080TM29", '0',
+      "WMWXR51080TM29AAA", '0', // invalid shape
+      "WMWXR51080TM29IOQ", '0', // invalid shape
+      "WMWXR51080TM29", '0', // invalid shape
       "5N1AN0NU6BC506916", 'X', // correct checksum: 1
       "WBA3A5C57CF256651", '3' // correct checksum: 3
     ));

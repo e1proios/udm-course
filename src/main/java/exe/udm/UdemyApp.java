@@ -5,7 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 // import exe.udm.utils.NumericAlgorithms;
 // import exe.udm.utils.VinValidator;
-import exe.udm.stream.Streams;
+// import exe.udm.stream.Streams;
+import exe.udm.inout.FileInput;
 
 @SpringBootApplication
 public class UdemyApp {
@@ -14,7 +15,9 @@ public class UdemyApp {
 		SpringApplication.run(UdemyApp.class, args);
 
 		// NumericAlgorithms.testNumericalAlgorithms();
+		// Streams.runStreams();;
 		// VinValidator.testVinValidator();
-		Streams.runStreams();;
+		// FileInput.runTest();
+		FileInput.parseGamesAsPOJOs();
 	}
 }
