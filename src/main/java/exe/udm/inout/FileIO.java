@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.function.Predicate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.TreeMap;
 
-public class FileInput {
+public class FileIO {
   public static final String GAMES_SOURCE = "src/main/resources/files/games.csv";
 
   public static void runTest() {
@@ -109,14 +111,16 @@ public class FileInput {
   }
 
   public static void printGameInfo() {
-    FileInput.printGameInfo(new GameFilter.GameFilterBuilder().build());
+    FileIO.printGameInfo(new GameFilter.GameFilterBuilder().build());
   }
 
   public static void printGameInfo(GameFilter givenFilter) {
+    var satisfyAll = FileIO.satisfyAll(givenFilter);
+
     try {
-      Map<Integer, List<PlayedGame>> grouped = FileInput.parseGamesAsPOJOs(GAMES_SOURCE)
+      Map<Integer, List<PlayedGame>> grouped = FileIO.parseGamesAsPOJOs(GAMES_SOURCE)
         .stream()
-        .filter(game -> FileInput.applyFilter(game, givenFilter))
+        .filter(satisfyAll)
         .collect(Collectors.groupingBy(
           PlayedGame::rating,
           () -> new TreeMap<Integer, List<PlayedGame>>((k1, k2) -> k2 - k1),
@@ -142,7 +146,65 @@ public class FileInput {
     }
   }
 
-  public static boolean applyFilter(PlayedGame game, GameFilter f) {
-    return true;
+  // TODO
+  public static void exportGameInfoToJSON() {}
+
+  public static Predicate<PlayedGame> satisfyAll(GameFilter f) {
+    List<Predicate<PlayedGame>> conditions = new ArrayList<>();
+
+    if (f.nameRegex() != null) {
+      conditions.add(game -> f.nameRegex().matcher(game.name()).find());
+    }
+    if (f.platformRegex() != null) {
+      conditions.add(game -> f.platformRegex().matcher(game.platform()).find());
+    }
+    if (f.considerRestriction()) {
+      conditions.add(game -> f.isRestricted() == game.restricted());
+    }
+
+    if (f.releasedBefore() != null) {
+      conditions.add(game -> f.releasedBefore().compareTo(game.released()) >= 0);
+    }
+    if (f.releasedAfter() != null) {
+      conditions.add(game -> f.releasedAfter().compareTo(game.released()) <= 0);
+    }
+
+    if (f.finishedBefore() != null) {
+      conditions.add(game -> f.finishedBefore().compareTo(game.finished()) >= 0);
+    }
+    if (f.finishedAfter() != null) {
+      conditions.add(game -> f.finishedAfter().compareTo(game.finished()) <= 0);
+    }
+
+    if (f.masteredBefore() != null) {
+      conditions.add(game -> f.masteredBefore().compareTo(game.mastered()) >= 0);
+    }
+    if (f.masteredAfter() != null) {
+      conditions.add(game -> f.masteredAfter().compareTo(game.mastered()) <= 0);
+    }
+
+    if (f.minCompletion() > 0) {
+      conditions.add(game -> game.completion() >= f.minCompletion());
+    }
+    if (f.maxCompletion() > 0) {
+      conditions.add(game -> game.completion() <= f.maxCompletion());
+    }
+
+    if (f.minRating() > 1 && f.minRating() < 11) {
+      conditions.add(game -> game.rating() >= f.minRating());
+    }
+    if (f.maxRating() < 10 && f.maxRating() > 0) {
+      conditions.add(game -> game.rating() <= f.maxRating());
+    }
+
+    if (f.notesRegex() != null) {
+      conditions.add(game -> f.notesRegex().matcher(game.notes()).find());
+    }
+
+    Predicate<PlayedGame> satisfyAll = conditions.stream()
+      .reduce(Predicate::and)
+      .orElse(t -> true);
+
+    return satisfyAll;
   }
 }

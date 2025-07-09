@@ -38,6 +38,9 @@ public record PlayedGame(
     sb.append(" - ");
     sb.append("completed: " + this.finished());
 
+    sb.append(" ----- ");
+    sb.append(this.notes());
+
     return sb.toString();
   }
 }

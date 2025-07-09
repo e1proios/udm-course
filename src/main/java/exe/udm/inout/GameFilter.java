@@ -4,21 +4,21 @@ import java.util.regex.Pattern;
 
 public class GameFilter {
   // optional fields only
-  private Pattern nameRegex;
-  private Pattern platformRegex;
-  private boolean considerRestriction;
-  private boolean isRestricted;
-  private Pattern releasedBefore;
-  private Pattern releasedAfter;
-  private Pattern finishedBefore;
-  private Pattern finishedAfter;
-  private Pattern masteredBefore;
-  private Pattern masteredAfter;
-  private double minCompletion;
-  private double maxCompletion;
-  private int minRating;
-  private int maxRating;
-  private Pattern notesRegex;
+  private final Pattern nameRegex;
+  private final Pattern platformRegex;
+  private final boolean considerRestriction;
+  private final boolean isRestricted;
+  private final String releasedBefore;
+  private final String releasedAfter;
+  private final String finishedBefore;
+  private final String finishedAfter;
+  private final String masteredBefore;
+  private final String masteredAfter;
+  private final double minCompletion;
+  private final double maxCompletion;
+  private final int minRating;
+  private final int maxRating;
+  private final Pattern notesRegex;
 
   private GameFilter(GameFilterBuilder builder) {
     this.nameRegex = builder.nameRegex;
@@ -54,27 +54,27 @@ public class GameFilter {
     return this.isRestricted;
   }
 
-  public Pattern releasedBefore() {
+  public String releasedBefore() {
     return this.releasedBefore;
   }
 
-  public Pattern releasedAfter() {
+  public String releasedAfter() {
     return this.releasedAfter;
   }
 
-  public Pattern finishedBefore() {
+  public String finishedBefore() {
     return this.finishedBefore;
   }
 
-  public Pattern finishedAfter() {
+  public String finishedAfter() {
     return this.finishedAfter;
   }
 
-  public Pattern masteredBefore() {
+  public String masteredBefore() {
     return this.masteredBefore;
   }
 
-  public Pattern masteredAfter() {
+  public String masteredAfter() {
     return this.masteredAfter;
   }
 
@@ -103,12 +103,12 @@ public class GameFilter {
     private Pattern platformRegex;
     private boolean considerRestriction = false;
     private boolean isRestricted;
-    private Pattern releasedBefore;
-    private Pattern releasedAfter;
-    private Pattern finishedBefore;
-    private Pattern finishedAfter;
-    private Pattern masteredBefore;
-    private Pattern masteredAfter;
+    private String releasedBefore;
+    private String releasedAfter;
+    private String finishedBefore;
+    private String finishedAfter;
+    private String masteredBefore;
+    private String masteredAfter;
     private double minCompletion = -1;
     private double maxCompletion = -1;
     private int minRating = -1;
@@ -117,13 +117,13 @@ public class GameFilter {
 
     public GameFilterBuilder() {}
 
-    public GameFilterBuilder setNameRegex(Pattern nrgx) {
-      this.nameRegex = nrgx;
+    public GameFilterBuilder setNameSearch(String s) {
+      this.nameRegex = Pattern.compile(s, Pattern.CASE_INSENSITIVE);
       return this;
     }
 
-    public GameFilterBuilder setPlatformRegex(Pattern platformRegex) {
-      this.platformRegex = platformRegex;
+    public GameFilterBuilder setPlatformSearch(String s) {
+      this.platformRegex = Pattern.compile(s, Pattern.CASE_INSENSITIVE);
       return this;
     }
 
@@ -137,33 +137,33 @@ public class GameFilter {
       return this;
     }
 
-    public GameFilterBuilder setReleasedBefore(Pattern releasedBefore) {
-      this.releasedBefore = releasedBefore;
+    public GameFilterBuilder setReleasedBefore(String s) {
+      this.releasedBefore = s;
       return this;
     }
 
-    public GameFilterBuilder setReleasedAfter(Pattern releasedAfter) {
-      this.releasedAfter = releasedAfter;
+    public GameFilterBuilder setReleasedAfter(String s) {
+      this.releasedAfter = s;
       return this;
     }
 
-    public GameFilterBuilder setFinishedBefore(Pattern finishedBefore) {
-      this.finishedBefore = finishedBefore;
+    public GameFilterBuilder setFinishedBefore(String s) {
+      this.finishedBefore = s;
       return this;
     }
 
-    public GameFilterBuilder setFinishedAfter(Pattern finishedAfter) {
-      this.finishedAfter = finishedAfter;
+    public GameFilterBuilder setFinishedAfter(String s) {
+      this.finishedAfter = s;
       return this;
     }
 
-    public GameFilterBuilder setMasteredBefore(Pattern masteredBefore) {
-      this.masteredBefore = masteredBefore;
+    public GameFilterBuilder setMasteredBefore(String s) {
+      this.masteredBefore = s;
       return this;
     }
 
-    public GameFilterBuilder setMasteredAfter(Pattern masteredAfter) {
-      this.masteredAfter = masteredAfter;
+    public GameFilterBuilder setMasteredAfter(String s) {
+      this.masteredAfter = s;
       return this;
     }
 
@@ -187,8 +187,8 @@ public class GameFilter {
       return this;
     }
 
-    public GameFilterBuilder setNotesRegex(Pattern notesRegex) {
-      this.notesRegex = notesRegex;
+    public GameFilterBuilder setNotesRegex(String s) {
+      this.notesRegex = Pattern.compile(s, Pattern.CASE_INSENSITIVE);
       return this;
     }
 
