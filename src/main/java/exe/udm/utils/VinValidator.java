@@ -2,7 +2,7 @@ package exe.udm.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;;
+import java.util.regex.Pattern;
 
 // additional German checksum used in vehicle registration docs
 public class VinValidator {

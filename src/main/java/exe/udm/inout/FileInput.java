@@ -109,14 +109,14 @@ public class FileInput {
   }
 
   public static void printGameInfo() {
-    FileInput.printGameInfo(Integer.MIN_VALUE);
+    FileInput.printGameInfo(new GameFilter.GameFilterBuilder().build());
   }
 
-  public static void printGameInfo(int minRating) {
+  public static void printGameInfo(GameFilter givenFilter) {
     try {
       Map<Integer, List<PlayedGame>> grouped = FileInput.parseGamesAsPOJOs(GAMES_SOURCE)
         .stream()
-        .filter(game -> game.rating() >= minRating)
+        .filter(game -> FileInput.applyFilter(game, givenFilter))
         .collect(Collectors.groupingBy(
           PlayedGame::rating,
           () -> new TreeMap<Integer, List<PlayedGame>>((k1, k2) -> k2 - k1),
@@ -140,5 +140,9 @@ public class FileInput {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
+  }
+
+  public static boolean applyFilter(PlayedGame game, GameFilter f) {
+    return true;
   }
 }
