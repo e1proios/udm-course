@@ -24,7 +24,7 @@ public class Streams {
 
       @Override
       public Integer get() {
-          return ++this.inc;
+        return ++this.inc;
       }
     }).limit(15).map(i -> "N-" + i);
 

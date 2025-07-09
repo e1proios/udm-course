@@ -17,7 +17,7 @@ public class UdemyApp {
 		// NumericAlgorithms.testNumericalAlgorithms();
 		// Streams.runStreams();;
 		// VinValidator.testVinValidator();
-		FileInput.runTest();
-		FileInput.parseGamesAsPOJOs(7);
+		// FileInput.runTest();
+		FileInput.printGameInfo(7);
 	}
 }

@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 import java.util.TreeMap;
 
 public class FileInput {
+  public static final String GAMES_SOURCE = "src/main/resources/files/games.csv";
+
   public static void runTest() {
     String path = "src/main/resources/files/poems.txt";
     File file = new File(path);
@@ -41,9 +43,7 @@ public class FileInput {
   }
 
   public static void parseGamesAsStrings() {
-    String path = "src/main/resources/files/games.csv";
-
-    try (Scanner scn = new Scanner(new File(path))) {
+    try (Scanner scn = new Scanner(new File(GAMES_SOURCE))) {
       scn.useDelimiter("\\R");
 
       Map<String, Integer> stats = new HashMap<>();
@@ -67,15 +67,10 @@ public class FileInput {
     }
   }
 
-  public static void parseGamesAsPOJOs() {
-    FileInput.parseGamesAsPOJOs(Integer.MIN_VALUE);
-  }
-
-  public static void parseGamesAsPOJOs(int minRating) {
-    String path = "src/main/resources/files/games.csv";
-
-    try (Stream<String> lines = Files.lines(Paths.get(path))) {
-      Map<Integer, List<PlayedGame>> grouped = lines.skip(1)
+  public static List<PlayedGame> parseGamesAsPOJOs(String path) throws IOException {
+    try (Stream<String> lines = Files.lines(Paths.get(GAMES_SOURCE))) {
+      return lines
+        .skip(1)
         .map(line -> line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1))
         .map(splitLine -> {
           return PlayedGame.create(
@@ -94,7 +89,6 @@ public class FileInput {
             splitLine[8] == null ? "" : splitLine[8]
           );
         })
-        .filter(game -> game.rating() >= minRating)
         .sorted((g1, g2) -> {
           var g1Fin = g1.finished().toLowerCase();
           var g2Fin = g2.finished().toLowerCase();
@@ -110,6 +104,19 @@ public class FileInput {
           }
           return g2Fin.compareTo(g1Fin);
         })
+        .toList();
+    }
+  }
+
+  public static void printGameInfo() {
+    FileInput.printGameInfo(Integer.MIN_VALUE);
+  }
+
+  public static void printGameInfo(int minRating) {
+    try {
+      Map<Integer, List<PlayedGame>> grouped = FileInput.parseGamesAsPOJOs(GAMES_SOURCE)
+        .stream()
+        .filter(game -> game.rating() >= minRating)
         .collect(Collectors.groupingBy(
           PlayedGame::rating,
           () -> new TreeMap<Integer, List<PlayedGame>>((k1, k2) -> k2 - k1),
