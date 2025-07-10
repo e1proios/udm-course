@@ -7,7 +7,7 @@ public record PlayedGame(
   String released,
   String finished,
   String mastered,
-  double completion,
+  float completion,
   int rating,
   String notes
 ) {
@@ -18,7 +18,7 @@ public record PlayedGame(
     String released,
     String finished,
     String mastered,
-    double completion,
+    float completion,
     int rating,
     String notes
   ) {

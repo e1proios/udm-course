@@ -17,8 +17,8 @@ public class GameFilter {
   private final String finishedAfter;
   private final String masteredBefore;
   private final String masteredAfter;
-  private final double minCompletion;
-  private final double maxCompletion;
+  private final float minCompletion;
+  private final float maxCompletion;
   private final int minRating;
   private final int maxRating;
   private final Pattern notesRegex;
@@ -109,8 +109,8 @@ public class GameFilter {
     private String finishedAfter;
     private String masteredBefore;
     private String masteredAfter;
-    private double minCompletion = -1;
-    private double maxCompletion = -1;
+    private float minCompletion = -1;
+    private float maxCompletion = -1;
     private int minRating = -1;
     private int maxRating = -1;
     private Pattern notesRegex;
@@ -167,12 +167,12 @@ public class GameFilter {
       return this;
     }
 
-    public GameFilterBuilder setMinCompletion(double minCompletion) {
+    public GameFilterBuilder setMinCompletion(float minCompletion) {
       this.minCompletion = minCompletion;
       return this;
     }
 
-    public GameFilterBuilder setMaxCompletion(double maxCompletion) {
+    public GameFilterBuilder setMaxCompletion(float maxCompletion) {
       this.maxCompletion = maxCompletion;
       return this;
     }

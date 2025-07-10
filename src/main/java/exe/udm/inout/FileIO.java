@@ -1,14 +1,17 @@
 package exe.udm.inout;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Predicate;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.Predicate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +24,8 @@ import java.util.TreeMap;
 import exe.udm.inout.game.PlayedGame;
 
 public class FileIO {
-  public static final String GAMES_SOURCE = "src/main/resources/files/games.csv";
+  public static final String GAMES_CSV_SOURCE = "src/main/resources/files/games.csv";
+  public static final String GAMES_JSON_OUTPUT_TARGET = "src/main/resources/files/games.json";
 
   public static void runTest() {
     String path = "src/main/resources/files/poems.txt";
@@ -48,7 +52,7 @@ public class FileIO {
   }
 
   public static void parseGamesAsStrings() {
-    try (Scanner scn = new Scanner(new File(GAMES_SOURCE))) {
+    try (Scanner scn = new Scanner(new File(GAMES_CSV_SOURCE))) {
       scn.useDelimiter("\\R");
 
       Map<String, Integer> stats = new HashMap<>();
@@ -73,7 +77,7 @@ public class FileIO {
   }
 
   public static List<PlayedGame> parseGamesAsPOJOs() throws IOException {
-    return parseGamesAsPOJOs(GAMES_SOURCE);
+    return parseGamesAsPOJOs(GAMES_CSV_SOURCE);
   }
 
   public static List<PlayedGame> parseGamesAsPOJOs(String path) throws IOException {
@@ -90,12 +94,12 @@ public class FileIO {
             splitLine[4].equals("") ? "n/a" : splitLine[4],
             splitLine[5],
             splitLine[6].equals("") || splitLine[6].equals("n/a")
-              ? 0.0
-              : Double.parseDouble(splitLine[6].substring(0, splitLine[6].length() - 1)),
+              ? 0.0f
+              : Float.parseFloat(splitLine[6].substring(0, splitLine[6].length() - 1)),
             splitLine[7].equals("")
               ? -1
               : Integer.parseInt(splitLine[7]),
-            splitLine[8] == null ? "" : splitLine[8]
+            splitLine[8] == null ? "" : splitLine[8].replace("^\"", "").replace("\"$", "")
           );
         })
         .sorted((g1, g2) -> {
@@ -117,11 +121,11 @@ public class FileIO {
     }
   }
 
-  public static void printGameInfo(List<PlayedGame> games) {
-    printGameInfo(games, game -> true);
+  public static void printFilteredGameInfo(List<PlayedGame> games) {
+    printFilteredGameInfo(games, game -> true);
   }
 
-  public static void printGameInfo(List<PlayedGame> games, Predicate<PlayedGame> satisfyAll) {
+  public static void printFilteredGameInfo(List<PlayedGame> games, Predicate<PlayedGame> satisfyAll) {
     Map<Integer, List<PlayedGame>> grouped = games
       .stream()
       .filter(satisfyAll)
@@ -148,11 +152,21 @@ public class FileIO {
   }
 
   public static void exportGameInfoToJSON(List<PlayedGame> games) {
-    games.sort((Comparator.comparing(PlayedGame::name)));
-    ObjectMapper jsonMapper = new ObjectMapper();
+    exportGameInfoToJSON(games, GAMES_JSON_OUTPUT_TARGET);
+  }
+
+  public static void exportGameInfoToJSON(List<PlayedGame> games, String path) {
+    PlayedGame[] gamesArray = games.toArray(new PlayedGame[games.size()]);
+    Arrays.sort(gamesArray, Comparator.comparing(PlayedGame::name));
+
+    ObjectMapper jsonMapper = new ObjectMapper()
+      .enable(SerializationFeature.INDENT_OUTPUT);
 
     try {
-      jsonMapper.writeValue(new File("games.json"), games);
+      jsonMapper.writeValue(
+        new File(path),
+        gamesArray
+      );
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
