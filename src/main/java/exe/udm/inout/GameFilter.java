@@ -1,5 +1,8 @@
 package exe.udm.inout;
 
+import java.util.ArrayList;
+import java.util.function.Predicate;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class GameFilter {
@@ -38,64 +41,61 @@ public class GameFilter {
     this.notesRegex = builder.notesRegex;
   }
 
-  public Pattern nameRegex() {
-    return this.nameRegex;
-  }
+  public Predicate<PlayedGame> satisfyAll() {
+    List<Predicate<PlayedGame>> conditions = new ArrayList<>();
 
-  public Pattern platformRegex() {
-    return this.platformRegex;
-  }
+    if (this.nameRegex != null) {
+      conditions.add(game -> this.nameRegex.matcher(game.name()).find());
+    }
+    if (this.platformRegex != null) {
+      conditions.add(game -> this.platformRegex.matcher(game.platform()).find());
+    }
+    if (this.considerRestriction) {
+      conditions.add(game -> this.isRestricted == game.restricted());
+    }
 
-  public boolean considerRestriction() {
-    return this.considerRestriction;
-  }
+    if (this.releasedBefore != null) {
+      conditions.add(game -> this.releasedBefore.compareTo(game.released()) >= 0);
+    }
+    if (this.releasedAfter != null) {
+      conditions.add(game -> this.releasedAfter.compareTo(game.released()) <= 0);
+    }
 
-  public boolean isRestricted() {
-    return this.isRestricted;
-  }
+    if (this.finishedBefore != null) {
+      conditions.add(game -> this.finishedBefore.compareTo(game.finished()) >= 0);
+    }
+    if (this.finishedAfter != null) {
+      conditions.add(game -> this.finishedAfter.compareTo(game.finished()) <= 0);
+    }
 
-  public String releasedBefore() {
-    return this.releasedBefore;
-  }
+    if (this.masteredBefore != null) {
+      conditions.add(game -> this.masteredBefore.compareTo(game.mastered()) >= 0);
+    }
+    if (this.masteredAfter != null) {
+      conditions.add(game -> this.masteredAfter.compareTo(game.mastered()) <= 0);
+    }
 
-  public String releasedAfter() {
-    return this.releasedAfter;
-  }
+    if (this.minCompletion > 0) {
+      conditions.add(game -> game.completion() >= this.minCompletion);
+    }
+    if (this.maxCompletion > 0) {
+      conditions.add(game -> game.completion() <= this.maxCompletion);
+    }
 
-  public String finishedBefore() {
-    return this.finishedBefore;
-  }
+    if (this.minRating > 1 && this.minRating < 11) {
+      conditions.add(game -> game.rating() >= this.minRating);
+    }
+    if (this.maxRating < 10 && this.maxRating > 0) {
+      conditions.add(game -> game.rating() <= this.maxRating);
+    }
 
-  public String finishedAfter() {
-    return this.finishedAfter;
-  }
+    if (this.notesRegex != null) {
+      conditions.add(game -> this.notesRegex.matcher(game.notes()).find());
+    }
 
-  public String masteredBefore() {
-    return this.masteredBefore;
-  }
-
-  public String masteredAfter() {
-    return this.masteredAfter;
-  }
-
-  public double minCompletion() {
-    return this.minCompletion;
-  }
-
-  public double maxCompletion() {
-    return this.maxCompletion;
-  }
-
-  public int minRating() {
-    return this.minRating;
-  }
-
-  public int maxRating() {
-    return this.maxRating;
-  }
-
-  public Pattern notesRegex() {
-    return this.notesRegex;
+    return conditions.stream()
+      .reduce(Predicate::and)
+      .orElse(t -> true);
   }
 
   public static class GameFilterBuilder {

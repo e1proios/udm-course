@@ -25,6 +25,6 @@ public class UdemyApp {
     // Streams.runStreams();;
     // VinValidator.testVinValidator();
     // FileInput.runTest();
-    FileIO.printGameInfo(f);
+    FileIO.printGameInfo(f.satisfyAll());
   }
 }
