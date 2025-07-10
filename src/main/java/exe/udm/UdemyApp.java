@@ -1,13 +1,11 @@
 package exe.udm;
 
+import java.io.IOException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import exe.udm.inout.FileIO;
-import exe.udm.inout.GameFilter;
-// import exe.udm.stream.Streams;
-// import exe.udm.utils.NumericAlgorithms;
-// import exe.udm.utils.VinValidator;
+import exe.udm.inout.game.GameFilter;
 
 @SpringBootApplication
 public class UdemyApp {
@@ -21,10 +19,16 @@ public class UdemyApp {
       .setNotesRegex("pistol start")
       .build();
 
+    try {
+      var games = FileIO.parseGamesAsPOJOs();
+      FileIO.printGameInfo(games, f.satisfyAll());
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
+
     // NumericAlgorithms.testNumericalAlgorithms();
     // Streams.runStreams();;
     // VinValidator.testVinValidator();
     // FileInput.runTest();
-    FileIO.printGameInfo(f.satisfyAll());
   }
 }

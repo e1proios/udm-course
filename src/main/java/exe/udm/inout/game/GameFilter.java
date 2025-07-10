@@ -1,4 +1,4 @@
-package exe.udm.inout;
+package exe.udm.inout.game;
 
 import java.util.ArrayList;
 import java.util.function.Predicate;

@@ -1,5 +1,6 @@
 package exe.udm.inout;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.TreeMap;
+
+import exe.udm.inout.game.PlayedGame;
 
 public class FileIO {
   public static final String GAMES_SOURCE = "src/main/resources/files/games.csv";
@@ -68,8 +72,12 @@ public class FileIO {
     }
   }
 
+  public static List<PlayedGame> parseGamesAsPOJOs() throws IOException {
+    return parseGamesAsPOJOs(GAMES_SOURCE);
+  }
+
   public static List<PlayedGame> parseGamesAsPOJOs(String path) throws IOException {
-    try (Stream<String> lines = Files.lines(Paths.get(GAMES_SOURCE))) {
+    try (Stream<String> lines = Files.lines(Paths.get(path))) {
       return lines
         .skip(1)
         .map(line -> line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1))
@@ -109,40 +117,44 @@ public class FileIO {
     }
   }
 
-  public static void printGameInfo() {
-    FileIO.printGameInfo(game -> true);
+  public static void printGameInfo(List<PlayedGame> games) {
+    printGameInfo(games, game -> true);
   }
 
-  public static void printGameInfo(Predicate<PlayedGame> satisfyAll) {
-    try {
-      Map<Integer, List<PlayedGame>> grouped = FileIO.parseGamesAsPOJOs(GAMES_SOURCE)
+  public static void printGameInfo(List<PlayedGame> games, Predicate<PlayedGame> satisfyAll) {
+    Map<Integer, List<PlayedGame>> grouped = games
+      .stream()
+      .filter(satisfyAll)
+      .collect(Collectors.groupingBy(
+        PlayedGame::rating,
+        () -> new TreeMap<Integer, List<PlayedGame>>((k1, k2) -> k2 - k1),
+        Collectors.toList()
+      ));
+
+    Iterator<Map.Entry<Integer, List<PlayedGame>>> itr = grouped.entrySet().iterator();
+
+    while (itr.hasNext()) {
+      var entry = itr.next();
+      var rating = entry.getKey() == -1 ? "not rated" : entry.getKey();
+
+      System.out.println("-".repeat(81));
+      System.out.println("RATING: " + rating);
+      System.out.println("-".repeat(81));
+
+      entry.getValue()
         .stream()
-        .filter(satisfyAll)
-        .collect(Collectors.groupingBy(
-          PlayedGame::rating,
-          () -> new TreeMap<Integer, List<PlayedGame>>((k1, k2) -> k2 - k1),
-          Collectors.toList()
-        ));
+        .forEach(System.out::println);
+    }
+  }
 
-      Iterator<Map.Entry<Integer, List<PlayedGame>>> itr = grouped.entrySet().iterator();
+  public static void exportGameInfoToJSON(List<PlayedGame> games) {
+    games.sort((Comparator.comparing(PlayedGame::name)));
+    ObjectMapper jsonMapper = new ObjectMapper();
 
-      while (itr.hasNext()) {
-        var entry = itr.next();
-        var rating = entry.getKey() == -1 ? "not rated" : entry.getKey();
-
-        System.out.println("-".repeat(81));
-        System.out.println("RATING: " + rating);
-        System.out.println("-".repeat(81));
-
-        entry.getValue()
-          .stream()
-          .forEach(System.out::println);
-      }
+    try {
+      jsonMapper.writeValue(new File("games.json"), games);
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
   }
-
-  // TODO
-  public static void exportGameInfoToJSON() {}
 }

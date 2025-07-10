@@ -1,4 +1,4 @@
-package exe.udm.inout;
+package exe.udm.inout.game;
 
 public record PlayedGame(
   String name,
