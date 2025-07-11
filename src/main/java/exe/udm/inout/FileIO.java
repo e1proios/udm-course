@@ -86,12 +86,16 @@ public class FileIO {
         .skip(1)
         .map(line -> line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1))
         .map(splitLine -> {
+          String name = splitLine[0];
+          String cleanName = name.replaceAll("^\"", "");
+          cleanName = cleanName.replaceAll("\"$", "");
+
           String notes = splitLine[8] == null ? "" : splitLine[8];
           String cleanNotes = notes.replaceAll("^\"", "");
           cleanNotes = cleanNotes.replaceAll("\"$", "");
 
           return PlayedGame.create(
-            splitLine[0],
+            cleanName,
             splitLine[1],
             splitLine[2].equals("FALSE") || splitLine[2].equals("n/a") ? false : true,
             splitLine[3],
