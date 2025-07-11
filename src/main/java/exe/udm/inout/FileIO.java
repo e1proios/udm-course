@@ -86,6 +86,10 @@ public class FileIO {
         .skip(1)
         .map(line -> line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1))
         .map(splitLine -> {
+          String notes = splitLine[8] == null ? "" : splitLine[8];
+          String cleanNotes = notes.replaceAll("^\"", "");
+          cleanNotes = cleanNotes.replaceAll("\"$", "");
+
           return PlayedGame.create(
             splitLine[0],
             splitLine[1],
@@ -99,7 +103,7 @@ public class FileIO {
             splitLine[7].equals("")
               ? -1
               : Integer.parseInt(splitLine[7]),
-            splitLine[8] == null ? "" : splitLine[8].replace("^\"", "").replace("\"$", "")
+            cleanNotes
           );
         })
         .sorted((g1, g2) -> {
