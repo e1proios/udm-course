@@ -1,7 +1,9 @@
-package exe.udm.inout;
+package exe.udm.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import exe.udm.file.game.PlayedGame;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,8 +22,6 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.TreeMap;
-
-import exe.udm.inout.game.PlayedGame;
 
 public class FileIO {
   public static final String GAMES_CSV_SOURCE = "src/main/resources/files/games.csv";
