@@ -35,22 +35,17 @@ public class Warehouse {
       this.orders.addLast(o);
       storage.put(o.type(), Integer.valueOf(currentQuantity - o.quantity()));
       System.out.println(
-        "Order " +
-        o.id() +
-        " placed: " +
-        o.quantity() +
-        " " +
-        o.type().toString(o.quantity())
+        String.format("Order #%d placed: %d %s", o.id(), o.quantity(), o.type().toString(o.quantity()))
       );
       notifyAll();
     } else {
       System.out.println(
-        "Can't place order " +
-        o.quantity() +
-        " " +
-        o.type().toString(o.quantity()) +
-        ", insufficient quantity in storage: " +
-        currentQuantity
+        String.format(
+          "Can't place order: %d %s, insufficient quantity in storage: %d",
+          o.quantity(),
+          o.type().toString(o.quantity()),
+          currentQuantity
+        )
       );
     }
   }
