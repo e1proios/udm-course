@@ -1,11 +1,17 @@
 package exe.udm;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import exe.udm.file.FileIO;
 import exe.udm.file.game.GameFilter;
+// import exe.udm.stream.Streams;
+import exe.udm.threads.Threads;
+// import exe.udm.utils.NumericAlgorithms;
+// import exe.udm.utils.VinValidator;
 
 @SpringBootApplication
 public class UdemyApp {
@@ -13,12 +19,13 @@ public class UdemyApp {
   public static void main(String[] args) {
     SpringApplication.run(UdemyApp.class, args);
 
-    testFileIO();
+    runThreads();
+    // testFileIO();
 
     // NumericAlgorithms.testNumericalAlgorithms();
-    // Streams.runStreams();;
+    // Streams.runStreams();
     // VinValidator.testVinValidator();
-    // FileInput.runTest();
+    // FileIO.runTest();
   }
 
   public static void testFileIO() {
@@ -34,6 +41,23 @@ public class UdemyApp {
       FileIO.exportGameInfoToJSON(games);
     } catch (IOException ioe) {
       ioe.printStackTrace();
+    }
+  }
+
+  public static void runThreads() {
+    Thread even = Threads.getEven();
+    Thread odd = Threads.getOdd();
+
+    try {
+      odd.start();
+      even.start();
+
+      TimeUnit.SECONDS.sleep(2);
+      even.interrupt();
+      TimeUnit.SECONDS.sleep(4);
+      odd.interrupt();
+    } catch (InterruptedException ie) {
+      ie.printStackTrace();
     }
   }
 }
