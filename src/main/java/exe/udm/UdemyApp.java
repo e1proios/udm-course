@@ -10,6 +10,7 @@ import exe.udm.file.FileIO;
 import exe.udm.file.game.GameFilter;
 // import exe.udm.stream.Streams;
 import exe.udm.threads.Threads;
+import exe.udm.threads.warehouse.*;
 // import exe.udm.utils.NumericAlgorithms;
 // import exe.udm.utils.VinValidator;
 
@@ -19,7 +20,8 @@ public class UdemyApp {
   public static void main(String[] args) {
     SpringApplication.run(UdemyApp.class, args);
 
-    runThreads();
+    WarehouseProcedure.execute();
+    // runThreads();
     // testFileIO();
 
     // NumericAlgorithms.testNumericalAlgorithms();
