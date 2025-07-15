@@ -22,7 +22,7 @@ public class WarehouseProcedure {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-    });
+    }, "Producer");
 
     Thread consumerA = new Thread(() -> {
       int orderCount = 0;
@@ -35,7 +35,7 @@ public class WarehouseProcedure {
       } catch (InterruptedException ie) {
         System.out.println("Consumer A interrupted");
       }
-    });
+    }, "Consumer A");
 
     Thread consumerB = new Thread(() -> {
       int orderCount = 0;
@@ -50,7 +50,7 @@ public class WarehouseProcedure {
       } catch (InterruptedException ie) {
         System.out.println("Consumer B interrupted");
       }
-    });
+    }, "Consumer B");
 
     producer.start();
     consumerA.start();
