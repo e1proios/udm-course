@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import exe.udm.threads.warehouse.types.Order;
+import exe.udm.threads.warehouse.types.ProductType;
+
 public class Warehouse {
   private final int MAX_ORDERS = 3;
   private Map<ProductType, Integer> storage;

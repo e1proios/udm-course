@@ -1,4 +1,4 @@
-package exe.udm.threads.warehouse;
+package exe.udm.threads.warehouse.types;
 
 public enum ProductType {
   KITEBOARD,

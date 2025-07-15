@@ -1,5 +1,8 @@
 package exe.udm.threads.warehouse;
 
+import exe.udm.threads.warehouse.types.Order;
+import exe.udm.threads.warehouse.types.ProductType;
+
 public class WarehouseProcedure {
   private static Warehouse wh = new Warehouse();
   private static int id = 0;
